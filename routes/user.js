@@ -5,7 +5,7 @@ const User = require("../models/user")
 router
     .route("/")
         .get( async (req , res ) => {
-            const users = await User.find().sort({createAt : 'desc'})
+            const users = await User.find({},{password:0}).sort({createAt : 'desc'})
             res.json(users) 
         })
         .post( async( req , res , next ) => {
@@ -18,8 +18,8 @@ router
     .route("/:id")
         .get( async( req , res ) => {
             const id = req.params.id
-           /*  const user = await User.findById(id,{password:0}) */
-            const user = await User.findById(id)
+            const user = await User.findById(id,{password:0}) 
+            /* const user = await User.findById(id) */
             res.send([
                 {
                     message : "getting user whit id "+id,
