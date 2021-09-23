@@ -8,6 +8,7 @@ mongoose.connect('mongodb+srv://m001-student:m001-mongodb-basics@sandbox.ltkid.m
 
 app.use(express.urlencoded({ extended: false}));
 
+app.use("/users",userRoutes)
 
 app.get('/',(req, res) => {
     res.send(`<h1> Hello world</h1>I am a node server with express, I will be an API for a PetShop <hr><br>`)
