@@ -1,5 +1,5 @@
 {
-  "name": "Petshop",
+  "name": "PetShop",
   "version": "1.0.0",
   "description": "é um API para gerenciamento e controle de estoque, que permite cadastrar, listar,editar e apagar, produtos e serviços da PetShop",
   "main": "index.js",
@@ -9,18 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Team-Developers-totti/ShoppingDosBichos.git"
+    "url": ""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Team-Developers-totti/ShoppingDosBichos/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/Team-Developers-totti/ShoppingDosBichos#readme",
+  "homepage": "",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.6",
     "swagger-ui-express": "^4.1.6"
   },
