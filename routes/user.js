@@ -3,41 +3,42 @@ const router = express.Router()
 const User = require("../models/user")
 const jwt = require("../auth/jwt")
 const middle = require("../auth/authMiddleware") //middleware
-
-
-/* const authMiddleware = async (req, res, next) => {
-  const [, token] = req.headers.authorization.split(' ')
-    
-  try {
-    const payload = await jwt.verify(token)
-    console.log ("payload = "+payload)
-    const user = await User.findById(payload.user)
-
-    if (!user) {
-      return res.send(401)
-    }
-
-    req.auth = user
-
-    next()
-  } catch (error) {
-    res.status(401).send(error)
-  }
-} */
+const validator =require('validator');
 
 router.post("/signup",async(req,res)=>{
     try {
-        
-        const result = await User.create(req.body)
-        const { password, ...user } = result.toObject()
-        
-        const token = jwt.sign({ user: user.id })
-        
-        res.send({ user, token })
+        const verifyUser = await User.findOne({email:req.body.email}).exec();
+        if(validator.isLength(req.body.name,{min:2})){
+            if(validator.isEmail(req.body.email)){
+                if(verifyUser!=undefined){
+                    res.status(400).send("email exist")
+                }else if(validator.isStrongPassword(req.body.password)){
+                    const result = await User.create(req.body)
+                    const { password, ...user } = result.toObject()
+                    const token = jwt.sign({ user: user.id })
+                    res.send({ user, token })
+                }else{
+                    message={
+                        error: "Password invalid",
+                        message:{
+                                minLength: 8,
+                                minLowercase: 1, 
+                                minUppercase: 1, 
+                                minNumbers: 1, 
+                                minSymbols: 1
+                                }}
+                    res.status(400).send(message)
+                }
+            }else{
+                res.status(400).send("email invalid")
+            }
+        }else{
+          res.status(400).send("name invalid")  
+        }
+         
     } catch (error) {
-        res.status(400).send(error)
+        res.status(400).send("error: "+error)
     }
- 
 })
 
 router.get('/login', async (req, res) => {
@@ -78,23 +79,21 @@ router.get('/login', async (req, res) => {
     res.send(error)
   }
 })
-
-
 router
     .route("/")
         .get(middle.authMiddleware, async (req , res ) => {
             const users = await User.find({},{password:0}).sort({createAt : 'desc'})
             res.json(users) 
         })
-        .post( async( req , res , next ) => {
+        /* .post( async( req , res , next ) => {
             req.user = new User()
             console.log(req.body.name)
             next()
-        },save_edit("new"))
+        },save_edit("new")) */
 
 router
     .route("/:id")
-        .get( async( req , res ) => {
+        .get( middle.authMiddleware , async( req , res ) => {
             const id = req.params.id
             const user = await User.findById(id,{password:0}) 
             res.send([
@@ -104,11 +103,11 @@ router
                 }
             ])
         })
-        .put( async( req , res , next) => {
+        .put( middle.authMiddleware , async( req , res , next) => {
             req.user = await User.findById(req.params.id)
             next()
         })
-        .delete( async( req, res ) => {
+        .delete( middle.authMiddleware , async( req, res ) => {
             await User.findByIdAndDelete(req.params.id);
             res.send("User whit id:"+req.params.id+" deleted" )
         })
