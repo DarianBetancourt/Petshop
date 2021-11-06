@@ -81,7 +81,7 @@ router.get('/login', async (req, res) => {
 })
 router
     .route("/")
-        .get(middle.authMiddleware, async (req , res ) => {
+        .get(/*middle.authMiddleware, */async (req , res ) => {
             const users = await User.find({},{password:0}).sort({createAt : 'desc'})
             res.json(users) 
         })

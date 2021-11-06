@@ -2,19 +2,19 @@ const jwt = require ("./jwt")
 const User = require("../models/user")
 
 const authMiddleware = async (req, res, next) => {
-    /* Recibe el Bearer autorization que contiene el token con el id de usuario encriptado, */ 
-    /* alamacena el token en una constante luego de hacer un split para separarlo del Bearer */
+    /* Receive the authorization bearer containing the token with the encrypted user id, */
+    /* stores the token in a constant after doing a split to separate it from the Bearer */
   const [, token] = req.headers.authorization.split(' ')
 
   try {
-    /* almacena en una constante el token verificado y desencriptado */  
+    /*  stores the verified and decrypted token in a constant  */  
     const payload = await jwt.verify(token)
-    /* obteniendo el usuario de la BD con el id antes desencriptado*/
+    /* obtaining the user of the DB with the id before decrypted*/
     const user = await User.findById(payload.user)
 
     if (!user) {
     
-        return res.send(401)
+        return res.status(401).send("Error")
     
     }else{
         
